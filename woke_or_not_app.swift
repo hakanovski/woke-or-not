@@ -16,7 +16,6 @@ let wokeCompanies: [Company] = [
     Company(name: "Microsoft", logo: "m.square", isWoke: true, wokePercentage: 80),
     Company(name: "Amazon", logo: "a.circle", isWoke: true, wokePercentage: 75),
     Company(name: "Nike", logo: "n.circle", isWoke: true, wokePercentage: 70)
-    // Add more as needed
 ]
 
 let notWokeCompanies: [Company] = [
@@ -25,10 +24,8 @@ let notWokeCompanies: [Company] = [
     Company(name: "Goya", logo: "g.circle", isWoke: false, wokePercentage: 25),
     Company(name: "Home Depot", logo: "hammer", isWoke: false, wokePercentage: 40),
     Company(name: "Walmart", logo: "w.circle", isWoke: false, wokePercentage: 35)
-    // Add more as needed
 ]
 
-// ContentView with WOKE and NOT WOKE sections and a search bar
 struct ContentView: View {
     @State private var searchText = ""
     @State private var searchResult: Company?
@@ -36,44 +33,56 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
+                // Başlık (Woke or Not?)
+                Text("Woke or Not?")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.purple)
+                    .padding()
+                
                 // Search Bar
-                TextField("Enter company name", text: $searchText, onCommit: searchCompany)
+                TextField("Woke or Not", text: $searchText, onCommit: searchCompany)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .overlay(
                         Button(action: searchCompany) {
-                            Text("WOKE or NOT WOKE?")
-                                .padding(.trailing)
+                            Text("Search")
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(Color.blue)
+                                .cornerRadius(8)
                         }, alignment: .trailing
                     )
                     .padding()
                 
-                // Display search result
+                // Search Result
                 if let result = searchResult {
                     Text("\(result.name) is \(result.isWoke ? "WOKE" : "NOT WOKE")")
                         .font(.headline)
+                        .foregroundColor(result.isWoke ? .blue : .red)
                         .padding()
                     Text("Woke Percentage: \(result.wokePercentage)%")
-                        .foregroundColor(result.isWoke ? .green : .red)
+                        .foregroundColor(result.isWoke ? .blue : .red)
                         .padding()
                 }
 
                 // WOKE and NOT WOKE sections
                 List {
-                    Section(header: Text("WOKE Companies")) {
+                    Section(header: Text("WOKE COMPANIES").foregroundColor(.blue)) {
                         ForEach(wokeCompanies) { company in
                             CompanyRow(company: company)
                         }
                     }
                     
-                    Section(header: Text("NOT WOKE Companies")) {
+                    Section(header: Text("NOT WOKE COMPANIES").foregroundColor(.red)) {
                         ForEach(notWokeCompanies) { company in
                             CompanyRow(company: company)
                         }
                     }
                 }
                 .listStyle(GroupedListStyle())
-                .navigationTitle("WOKE or NOT WOKE")
+                .navigationTitle("Woke or Not?")
             }
         }
     }
@@ -92,12 +101,12 @@ struct CompanyRow: View {
     var body: some View {
         HStack {
             Image(systemName: company.logo) // Placeholder for company logo
-                .foregroundColor(company.isWoke ? .green : .red)
+                .foregroundColor(company.isWoke ? .blue : .red)
             Text(company.name)
                 .font(.body)
             Spacer()
             Text("\(company.wokePercentage)%")
-                .foregroundColor(company.isWoke ? .green : .red)
+                .foregroundColor(company.isWoke ? .blue : .red)
                 .font(.subheadline)
         }
     }
@@ -107,5 +116,7 @@ struct CompanyRow: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
     }
 }
