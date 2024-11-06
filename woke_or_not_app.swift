@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Main View - ContentView for Woke or Not App
+// Main View - ContentView for Woke or Not App with Tablet Optimizations and Animations
 struct ContentView: View {
     @State private var searchText = ""
     @State private var selectedCategory: CategoryType = .companies
@@ -9,30 +9,37 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Title Section
+                // Title Section with Animation
                 HStack(spacing: 4) {
                     Text("WOKE")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.blue)
+                        .transition(.scale) // Animates title appearance
                     Text("OR")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
+                        .transition(.scale)
                     Text("NOT")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.red)
+                        .transition(.scale)
                     Text("?")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
+                        .transition(.scale)
                 }
                 .padding(.top, 20)
+                .animation(.easeIn(duration: 0.5), value: selectedCategory) // Adds animation on category change
                 
                 // Category Tabs Section
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 15) {
                         ForEach(CategoryType.allCases, id: \.self) { category in
                             Button(action: {
-                                selectedCategory = category
-                                searchText = ""  // Reset search text when switching categories
+                                withAnimation(.spring()) { // Animates category change
+                                    selectedCategory = category
+                                    searchText = ""  // Reset search text when switching categories
+                                }
                             }) {
                                 Text(category.rawValue)
                                     .font(.headline)
@@ -61,7 +68,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
                 
-                // Content Display
+                // Content Display with Animation
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         // WOKE Section
@@ -73,7 +80,9 @@ struct ContentView: View {
                             
                             ForEach(topItems(isWoke: true), id: \.id) { item in
                                 Button(action: {
-                                    selectedItem = item
+                                    withAnimation(.easeOut) { // Animates selection of an item
+                                        selectedItem = item
+                                    }
                                 }) {
                                     CategoryRow(item: item)
                                         .padding(.horizontal)
@@ -92,7 +101,9 @@ struct ContentView: View {
                             
                             ForEach(topItems(isWoke: false), id: \.id) { item in
                                 Button(action: {
-                                    selectedItem = item
+                                    withAnimation(.easeOut) {
+                                        selectedItem = item
+                                    }
                                 }) {
                                     CategoryRow(item: item)
                                         .padding(.horizontal)
@@ -104,10 +115,12 @@ struct ContentView: View {
                 }
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
+            .frame(maxWidth: .infinity, maxHeight: .infinity) // Adapts to tablet screen sizes
             .sheet(item: $selectedItem) { item in
                 DetailView(item: item) // Opening detail view for selected item
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle()) // Optimizes for larger screens like tablets
     }
     
     // Function to fetch top 5 items based on Woke or Not Woke status, category, and search text
@@ -127,7 +140,7 @@ struct DetailView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // Logo or Placeholder Image
+            // Logo or Placeholder Image with Fade-In Animation
             AsyncImage(url: item.logoURL) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
@@ -136,8 +149,10 @@ struct DetailView: View {
                     .scaledToFit()
                     .frame(width: 100, height: 100)
                     .foregroundColor(.gray)
+                    .transition(.opacity) // Fade-in animation for placeholder
             }
             .frame(width: 100, height: 100)
+            .animation(.easeIn, value: item.logoURL) // Animates image loading
             
             // Item Name
             Text(item.name)
@@ -175,7 +190,7 @@ struct CategoryRow: View {
     
     var body: some View {
         HStack {
-            // Dynamically loaded logo or placeholder icon
+            // Dynamically loaded logo or placeholder icon with Slide Animation
             AsyncImage(url: item.logoURL) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
@@ -184,6 +199,7 @@ struct CategoryRow: View {
                     .scaledToFit()
                     .frame(width: 40, height: 40)
                     .foregroundColor(.gray)
+                    .transition(.slide) // Adds slide transition for image load
             }
             .frame(width: 40, height: 40)
             
@@ -202,6 +218,7 @@ struct CategoryRow: View {
         .padding()
         .background(Color.gray.opacity(0.1))
         .cornerRadius(8)
+        .animation(.easeInOut(duration: 0.3), value: item.id) // Animates row appearance
     }
 }
 
@@ -224,6 +241,9 @@ enum CategoryType: String, CaseIterable {
     case educational = "Educational"
     case government = "Government"
 }
+
+// Place where you add your sampleData array
+// let sampleData = [...]
 
 let sampleData = [
     // Companies - Woke
